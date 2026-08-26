@@ -1,0 +1,4 @@
+name = "flags-2-env-clients"
+kind = "clients"
+version = "0.1.0"
+
