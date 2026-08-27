@@ -1,7 +1,7 @@
-export { Client } from "./client";
-export { configFromEnv } from "./config";
-export type { ClientConfig } from "./config";
-export { ClientError } from "./errors";
-export type { Health, ResourceEnvelope } from "./types";
-export { RESOURCE } from "./types";
+export { Client } from "./client.ts";
+export { configFromEnv } from "./config.ts";
+export type { ClientConfig } from "./config.ts";
+export { ClientError } from "./errors.ts";
+export type { Health, ResourceEnvelope } from "./types.ts";
+export { RESOURCE } from "./types.ts";
 
