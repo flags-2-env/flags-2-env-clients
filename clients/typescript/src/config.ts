@@ -1,4 +1,4 @@
-import { ClientError } from "./errors";
+import { ClientError } from "./errors.ts";
 
 export interface ClientConfig {
   baseUrl: string;
@@ -6,8 +6,9 @@ export interface ClientConfig {
   maxResponseBytes: number;
 }
 
+/** Build config from an explicit env map. Process env is the caller's effect. */
 export function configFromEnv(
-  env: Record<string, string | undefined> = process.env,
+  env: Record<string, string | undefined>,
 ): ClientConfig {
   const baseUrl = env["FLAGS_2_ENV_API_BASE"]?.trim();
   if (!baseUrl) {
@@ -19,4 +20,3 @@ export function configFromEnv(
     maxResponseBytes: 64 * 1024,
   };
 }
-
