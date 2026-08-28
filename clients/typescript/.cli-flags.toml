@@ -1,0 +1,20 @@
+# flags-2-env surface for the TypeScript client.
+[identity]
+service = "flags-2-env-ts-client"
+type_name = "ClientEnv"
+
+[env]
+files = [".env"]
+load = true
+
+[flags.api_base]
+env = "FLAGS_2_ENV_API_BASE"
+type = "string"
+required = true
+examples = ["http://127.0.0.1:8080", "https://api.flags2env.example"]
+help = "API HTTP base URL."
+
+[flags.token]
+env = "FLAGS_2_ENV_TOKEN"
+type = "string"
+help = "Optional bearer token."

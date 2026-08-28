@@ -2,7 +2,6 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { configFromEnv } from "./config.ts";
-import { ClientError } from "./errors.ts";
 
 test("configFromEnv reads only the supplied map", () => {
   const previous = process.env.FLAGS_2_ENV_API_BASE;
@@ -15,8 +14,13 @@ test("configFromEnv reads only the supplied map", () => {
     assert.equal(config.baseUrl, "https://flags.example");
     assert.equal(config.bearerToken, "secret");
     assert.throws(() => configFromEnv({}), (error: unknown) => {
-      assert.ok(error instanceof ClientError);
-      assert.equal(error.code, "invalid_base");
+      assert.ok(error instanceof Error);
+      assert.match(
+        error.message,
+        /missing required environment variable FLAGS_2_ENV_API_BASE/,
+      );
+      assert.match(error.message, /expected type: string/);
+      assert.match(error.message, /http:\/\/127\.0\.0\.1:8080/);
       return true;
     });
   } finally {
