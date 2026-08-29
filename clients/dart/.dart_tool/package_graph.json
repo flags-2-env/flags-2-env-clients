@@ -1,0 +1,14 @@
+{
+  "roots": [
+    "flags_2_env_client"
+  ],
+  "packages": [
+    {
+      "name": "flags_2_env_client",
+      "version": "0.1.0",
+      "dependencies": [],
+      "devDependencies": []
+    }
+  ],
+  "configVersion": 1
+}
