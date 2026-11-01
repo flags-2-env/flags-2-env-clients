@@ -1,0 +1,4 @@
+# Candidate-only Oreslang package: not registered for publishing.
+[package]
+name = "flags-2-env-client"
+version = "0.0.0"
