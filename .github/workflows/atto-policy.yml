@@ -30,5 +30,10 @@ jobs:
         run: |
           test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
           git diff --check
-      - name: Exercise source and host-reference policy models
+      - name: Exercise Rust AttoLang policy oracle and source-drift tests
+        run: |
+          rustc --version
+          rustc --edition=2021 --test clients/atto/policy_model.rs -o "$RUNNER_TEMP/atto-policy-model"
+          "$RUNNER_TEMP/atto-policy-model" --test-threads=1
+      - name: Preserve existing JavaScript transport compatibility coverage
         run: node --test clients/atto/*.test.mjs
