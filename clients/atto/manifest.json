@@ -1,0 +1,15 @@
+{
+  "contract": "flags-2-env/attolang-client-policy/v1",
+  "language": "attolang",
+  "source_extension": ".atto",
+  "entrypoint": "health_policy.atto",
+  "status": "experimental-source-only",
+  "supported_policies": [
+    "http-health-admission",
+    "bearer-forwarding-admission"
+  ],
+  "runtime_verified": false,
+  "http_transport_implemented": false,
+  "json_decoder_implemented": false,
+  "compiler_backend_verified": false
+}

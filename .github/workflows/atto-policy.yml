@@ -1,0 +1,39 @@
+name: AttoLang source policy model
+on:
+  pull_request:
+    paths:
+      - 'clients/atto/**'
+      - '.github/workflows/atto-policy.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'clients/atto/**'
+      - '.github/workflows/atto-policy.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  policy-model:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: '22'
+      - name: Verify exact head and inspect changes
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          git diff --check
+      - name: Exercise Rust AttoLang policy oracle and source-drift tests
+        run: |
+          rustc --version
+          rustc --edition=2021 --test clients/atto/policy_model.rs -o "$RUNNER_TEMP/atto-policy-model"
+          "$RUNNER_TEMP/atto-policy-model" --test-threads=1
+      - name: Preserve existing JavaScript transport compatibility coverage
+        run: node --test clients/atto/*.test.mjs
