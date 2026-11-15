@@ -30,5 +30,5 @@ jobs:
         run: |
           test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
           git diff --check
-      - name: Exercise source policy model
-        run: node --test clients/atto/health_policy_model.test.mjs
+      - name: Exercise source and host-reference policy models
+        run: node --test clients/atto/*.test.mjs

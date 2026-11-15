@@ -1,0 +1,28 @@
+// Pure AttoLang transport-admission predicates, requiring trusted host facts.
+// This is source-only: no HTTP, JSON decoder, TLS or permissions runtime.
+define module flags_2_env_transport_boundary as
+  pub fnc may_issue_request(bool capability_live, bool https_only,
+                            bool hostname_valid, bool same_origin,
+                            bool bearer_safe): bool {
+    return capability_live && https_only && hostname_valid &&
+      same_origin && bearer_safe;
+  }
+
+  pub fnc may_accept_response(bool transport_ok, int status,
+                              int body_bytes, int byte_budget,
+                              bool no_redirect, bool json_shape_valid,
+                              bool protocol_supported): bool {
+    return transport_ok && status == 200 && body_bytes >= 0 &&
+      byte_budget > 0 && body_bytes <= byte_budget &&
+      no_redirect && json_shape_valid && protocol_supported;
+  }
+
+  pub fnc self_check(): bool {
+    return may_issue_request(true, true, true, true, true) &&
+      !may_issue_request(false, true, true, true, true) &&
+      !may_issue_request(true, true, true, false, true) &&
+      may_accept_response(true, 200, 8, 8, true, true, true) &&
+      !may_accept_response(true, 200, 9, 8, true, true, true) &&
+      !may_accept_response(true, 302, 0, 8, true, true, true);
+  }
+end
