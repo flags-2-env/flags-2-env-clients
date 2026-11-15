@@ -50,19 +50,21 @@ fn compact(source: &str) -> String {
 
 #[test]
 fn health_policy_has_one_valid_combination_in_160() {
-    let mut cases = 0;
-    let mut successes = 0;
-    for status in [0, 199, 200, 201, 401] {
-        for mask in 0..32 {
-            let input = bits::<5>(mask);
-            let admitted = health_admitted(status, input[0], input[1], input[2], input[3], input[4]);
-            assert_eq!(admitted, status == 200 && mask == 31, "status={status}, mask={mask}");
-            cases += 1;
-            successes += usize::from(admitted);
-        }
-    }
-    assert_eq!(cases, 160);
-    assert_eq!(successes, 1);
+    let outcomes: Vec<bool> = [0, 199, 200, 201, 401]
+        .into_iter()
+        .flat_map(|status| {
+            (0..32).map(move |mask| {
+                let input = bits::<5>(mask);
+                let admitted = health_admitted(
+                    status, input[0], input[1], input[2], input[3], input[4],
+                );
+                assert_eq!(admitted, status == 200 && mask == 31, "status={status}, mask={mask}");
+                admitted
+            })
+        })
+        .collect();
+    assert_eq!(outcomes.len(), 160);
+    assert_eq!(outcomes.into_iter().filter(|accepted| *accepted).count(), 1);
 }
 
 #[test]
@@ -86,27 +88,27 @@ fn request_admission_denies_31_of_32_combinations() {
 
 #[test]
 fn response_admission_covers_768_cases_and_boundaries() {
-    let mut cases = 0;
-    let mut successes = 0;
-    for status in [199, 200, 201, 301] {
-        for budget in [-1, 0, 8] {
-            for body in [-1, 0, 8, 9] {
-                for mask in 0..16 {
-                    let admitted = response_admitted(status, body, budget, bits::<4>(mask));
-                    let expected =
-                        status == 200 && budget > 0 && body >= 0 && body <= budget && mask == 15;
-                    assert_eq!(
-                        admitted, expected,
-                        "status={status}, budget={budget}, body={body}, mask={mask}"
-                    );
-                    cases += 1;
-                    successes += usize::from(admitted);
-                }
-            }
-        }
-    }
-    assert_eq!(cases, 768);
-    assert_eq!(successes, 2); // body 0 or 8, with budget 8
+    let outcomes: Vec<bool> = [199, 200, 201, 301]
+        .into_iter()
+        .flat_map(|status| {
+            [-1_i64, 0, 8].into_iter().flat_map(move |budget| {
+                [-1_i64, 0, 8, 9].into_iter().flat_map(move |body| {
+                    (0..16).map(move |mask| {
+                        let admitted = response_admitted(status, body, budget, bits::<4>(mask));
+                        let expected =
+                            status == 200 && budget > 0 && body >= 0 && body <= budget && mask == 15;
+                        assert_eq!(
+                            admitted, expected,
+                            "status={status}, budget={budget}, body={body}, mask={mask}"
+                        );
+                        admitted
+                    })
+                })
+            })
+        })
+        .collect();
+    assert_eq!(outcomes.len(), 768);
+    assert_eq!(outcomes.into_iter().filter(|accepted| *accepted).count(), 2);
 }
 
 #[test]
